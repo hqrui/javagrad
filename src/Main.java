@@ -1,16 +1,13 @@
 public class Main {
     public static void main(String[] args) {
         System.out.println("Hello, World!");
-        Value a = new Value(3.4);
-        Value b = new Value(1.5);
-        Value c = a.add(b);
-        c.accum_grad(69);
-        System.out.println(c.get_grad());
-        System.out.println(c.get_child2().get_grad());
-        c.backward();
-        c.backward();
-        System.out.println(c.get_grad());
-        System.out.println(c.get_child1().get_grad());
-
+        Value a = new Value(7);
+        Value b = new Value(5);
+        Value c = a.mul(b);
+        Value d = new Value(3);
+        Value e = c.mul(d);
+        System.out.println(e.get_child1().get_child1().get_grad() + " " + e.get_child1().get_child2().get_grad() + " " + e.get_child1().get_grad() + " " +  e.get_child2().get_grad() + " " + e.get_grad());
+        e.backward();
+        System.out.println(e.get_child1().get_child1().get_grad() + " " + e.get_child1().get_child2().get_grad() + " " + e.get_child1().get_grad() + " " +  e.get_child2().get_grad() + " " + e.get_grad());
     }
 }

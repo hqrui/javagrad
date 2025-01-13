@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.Collections;
+
 public class Value {
     private double data = 0.0;
     private double grad = 0.0;
@@ -15,27 +18,57 @@ public class Value {
         child2 = _child2;
     }
 
-    public void set_data(double _data){data = _data;}
+//    public void set_data(double _data){data = _data;}
     public double get_data(){return data;}
 
-    public void accum_grad(double _delta_grad){grad += _delta_grad;}
+    public void accumulate_grad(double _delta_grad){grad += _delta_grad;}
     public double get_grad(){return grad;}
 
     public Value get_child1(){return child1;}
     public Value get_child2(){return child2;}
 
-    public void set_backward_runnable(Runnable _backward){backward = _backward;}
-    public void backward(){backward.run();}
+//    public void set_backward_runnable(Runnable _backward){backward = _backward;}
+//    public void backward_single_op(){backward.run();}
+
+    public void backward(){
+        ArrayList<Value> nodes = new ArrayList<>(); //Topological sort
+        backward(nodes);
+        Collections.reverse(nodes);
+
+        grad = 1.0;
+        for(Value node: nodes){ //Backpropagate gradients
+            node.backward.run();
+            System.out.println(node.data);
+        }
+    }
+
+    private void backward(ArrayList<Value> nodes){
+        if(child1 != null && child1.backward != null) child1.backward(nodes); //Continue to backprop if there is a child which is not a leaf node
+        if(child2 != null && child2.backward != null) child2.backward(nodes);
+        nodes.add(this);
+    }
+
+    public void zero_grad(){
+        grad = 0.0;
+        if(child1 != null) child1.zero_grad();
+        if(child2 != null) child2.zero_grad();
+    }
 
     public Value add(Value other){
         Value out = new Value(data + other.get_data(), this, other);
-        Runnable _backward = new Runnable() {
-            public void run() {
-                other.accum_grad(out.grad);
-                accum_grad(out.grad);
-            }
+        out.backward = () -> {
+            grad += out.grad;
+            other.grad += out.grad;
         };
-        out.set_backward_runnable(_backward);
+        return out;
+    }
+
+    public Value mul(Value other){
+        Value out = new Value(data * other.get_data(), this, other);
+        out.backward = () -> {
+            grad += other.data * out.grad;
+            other.grad += data * out.grad;
+        };
         return out;
     }
 
