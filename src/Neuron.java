@@ -1,7 +1,7 @@
 import java.util.Random;
 
 public class Neuron {
-    private Value b;
+    private final Value b; // It's final because b is a reference to a Value(), not a double itself.
     private final Value[] w;
 
     public Neuron(int inputLength){

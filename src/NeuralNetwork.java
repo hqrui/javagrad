@@ -9,14 +9,14 @@ public class NeuralNetwork {
         }
     }
 
-    public Value[] run(Value[] inputX){
-        Value[] curX = null;
-        for(Layer layer : layers){
-            if(curX == null)curX = layer.run(inputX);
-            else curX = layer.run(curX);
-        }
-        return curX;
-    }
+//    public Value[] run(Value[] inputX){
+//        Value[] curX = null;
+//        for(Layer layer : layers){
+//            if(curX == null)curX = layer.run(inputX);
+//            else curX = layer.run(curX);
+//        }
+//        return curX;
+//    }
 
     public Value[][] run(Value[][] inputX){
         Value[][] curX = new Value[inputX.length][];

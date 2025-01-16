@@ -49,7 +49,7 @@ public class Value {
         Collections.reverse(nodes);
 
         grad = 1.0;
-        System.out.println("NODES AND VISITED SIZE " + nodes.size() + " " + visited.size());
+//        System.out.println("NODES AND VISITED SIZE " + nodes.size() + " " + visited.size());
         for (Value node : nodes) { //Backpropagate gradients
             node.backward.run();
 //            System.out.println("LABEL, DATA, GRAD, CHILDREN: " + node.label + " " + node.data + " " + node.grad + " " +  (((node.child1!=null)?1:0) + ((node.child2!=null)?1:0))); //node.child1.label +" " + node.child2.label);//
@@ -94,33 +94,25 @@ public class Value {
 
     public Value pow(double other){
         Value out = new Value(Math.pow(data, other), this, null, "pow" + other);
-        out.backward = () -> {
-            grad += other * Math.pow(data, other - 1) * out.grad;
-        };
+        out.backward = () -> grad += other * Math.pow(data, other - 1) * out.grad;
         return out;
     }
 
     public Value neg(){
         Value out = new Value(-data, this, null, "neg");
-        out.backward = () -> {
-            grad -= out.grad;
-        };
+        out.backward = () -> grad -= out.grad;
         return out;
     }
 
     public Value relu() {
         Value out = new Value((data > 0) ? data : 0, this, null, "relu");
-        out.backward = () -> {
-            grad += (data > 0) ? out.grad : 0;
-        };
+        out.backward = () -> grad += (data > 0) ? out.grad : 0;
         return out;
     }
 
     public Value tanh() {
         Value out = new Value(Math.tanh(data), this, null, "tanh");
-        out.backward = () -> {
-            grad += (1 - (out.data * out.data)) * out.grad;
-        };
+        out.backward = () -> grad += (1 - (out.data * out.data)) * out.grad;
         return out;
     }
 }
